@@ -1,27 +1,136 @@
+:root {
+	--editor-color-text: theme("colors.white");
+	--editor-color-constant: theme("colors.emerald.300");
+	--editor-color-string: theme("colors.emerald.300");
+	--editor-color-comment: theme("colors.zinc.500");
+	--editor-color-keyword: theme("colors.sky.300");
+	--editor-color-parameter: theme("colors.pink.300");
+	--editor-color-function: theme("colors.violet.300");
+	--editor-color-string-expression: theme("colors.emerald.300");
+	--editor-color-punctuation: theme("colors.zinc.200");
+	/* --foreground-rgb: 0, 0, 0;
+	--background-start-rgb: 214, 219, 220;
+	--background-end-rgb: 255, 255, 255; */
+}
+
+@media (prefers-color-scheme: dark) {
+	/* :root {
+		--foreground-rgb: 255, 255, 255;
+		--background-start-rgb: 0, 0, 0;
+		--background-end-rgb: 0, 0, 0;
+	} */
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+html {
+	scroll-behavior: smooth;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+	color: rgb(var(--foreground-rgb));
+	background: linear-gradient(
+			to bottom,
+			transparent,
+			rgb(var(--background-end-rgb))
+		)
+		rgb(var(--background-start-rgb));
+}
+
+/* code span {
+	margin-right: theme("spacing.1");
+} */
+
+code.code:not(.nohighlight),
+code.code:not(.nohighlight) {
+	color: var(--editor-color-text);
+}
+
+.language-javascript.code.code:not(.nohighlight),
+.language-javascript.code.code:not(.nohighlight) {
+	color: var(--editor-color-function);
+}
+
+code:not(.nohighlight) .code-strong {
+	font-weight: theme("fontWeight.semibold");
+}
+code:not(.nohighlight) .code-emphasis {
+	font-style: italic;
+}
+
+code:not(.nohighlight) .code-tag,
+code:not(.nohighlight) .code-selector,
+code:not(.nohighlight) .code-literal,
+code:not(.nohighlight) .code-section,
+code:not(.nohighlight) .code-link {
+	color: theme("colors.gray.500");
+}
+
+code:not(.nohighlight) .code-subst {
+	/* default */
+}
+
+code:not(.nohighlight) .code-string {
+	color: theme("colors.cyan.400");
+}
+
+code:not(.nohighlight).language-javascript .code-string {
+	color: var(--editor-color-constant);
+}
+
+code:not(.nohighlight) .code-title.class_ {
+	color: var(--editor-color-function);
+}
+code:not(.nohighlight) .code-title {
+	color: var(--editor-color-string);
+}
+
+code:not(.nohighlight) .code-symbol,
+code:not(.nohighlight) .code-bullet,
+code:not(.nohighlight) .code-built_in,
+code:not(.nohighlight) .code-addition,
+code:not(.nohighlight) .code-template-tag {
+	color: var(--editor-color-string-expression);
+}
+code:not(.nohighlight) .code-template-variable {
+	color: var(--editor-color-keyword);
+}
+
+code:not(.nohighlight) .code-comment,
+code:not(.nohighlight) .code-quote,
+code:not(.nohighlight) .code-deletion,
+code:not(.nohighlight) .code-meta {
+	color: var(--editor-color-comment);
+}
+
+code:not(.nohighlight) .code-attr,
+code:not(.nohighlight) .code-keyword {
+	color: var(--editor-color-keyword);
+}
+code:not(.nohighlight) .code-variable {
+	color: var(--editor-color-string-expression);
+}
+code:not(.nohighlight) .code-selector-tag,
+code:not(.nohighlight) .code-literal,
+code:not(.nohighlight) .code-doctag,
+code:not(.nohighlight) .code-type,
+code:not(.nohighlight) .code-name {
+	color: var(--editor-color-string);
+}
+
+code:not(.nohighlight).language-html .code-selector-tag,
+code:not(.nohighlight).language-html .code-literal,
+code:not(.nohighlight).language-html .code-doctag,
+code:not(.nohighlight).language-html .code-type,
+code:not(.nohighlight).language-html .code-name {
+	color: theme("colors.cyan.500");
+}
+code:not(.nohighlight).language-html .code-attr,
+code:not(.nohighlight).language-html .code-keyword {
+	color: theme("colors.cyan.200");
+}
+code:not(.nohighlight).language-html .code-string {
+	color: theme("colors.orange.400");
 }
