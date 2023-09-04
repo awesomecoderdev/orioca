@@ -3,11 +3,10 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useInView } from "framer-motion";
 
-import { useSectionStore } from "@/components/SectionProvider";
+// import { useSectionStore } from "@/components/SectionProvider";
 import { Tag } from "@/components/Tag";
 import { remToPx } from "@/lib/remToPx";
-import { HeadingProps } from "@/types";
-import { classNames } from "@/utils/class";
+import { cn } from "@/lib/utils";
 
 function AnchorIcon(props: any) {
 	return (
@@ -79,7 +78,7 @@ export function Heading({
 }: HeadingProps) {
 	let Component: any = `h${parseInt(level)}`;
 	let ref = useRef<any>();
-	let registerHeading = useSectionStore((s) => s.registerHeading);
+	// let registerHeading = useSectionStore((s) => s.registerHeading);
 
 	let inView = useInView(ref, {
 		margin: `${remToPx(-3.5)}px 0px 0px 0px`,
@@ -87,9 +86,9 @@ export function Heading({
 	});
 
 	useEffect(() => {
-		if (level === 2) {
-			registerHeading({ id, ref, offsetRem: tag || label ? 8 : 6 });
-		}
+		// if (level === 2) {
+		// 	registerHeading({ id, ref, offsetRem: tag || label ? 8 : 6 });
+		// }
 	});
 
 	return (
@@ -98,7 +97,7 @@ export function Heading({
 			<Component
 				ref={ref}
 				id={anchor ? id : undefined}
-				className={classNames(
+				className={cn(
 					tag || label ? "mt-2 scroll-mt-32" : "scroll-mt-24",
 					className
 				)}

@@ -1,16 +1,23 @@
-import { TextLoadingAnimation } from "@/components/animation/Lottie";
-import React, { Fragment } from "react";
+"use client";
 
-const DefaultLoading = () => {
+import { Motion } from "@/components/Contents";
+import { Loader } from "@/components/ui/loader";
+
+const Loading = () => {
 	return (
-		<Fragment>
-			<div className="relative flex justify-center items-center min-h-[70vh] w-full">
-				<div className="w-screen max-w-xs">
-					<TextLoadingAnimation />
-				</div>
-			</div>
-		</Fragment>
+		<Motion
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			transition={{
+				duration: 0.75,
+				ease: "easeInOut",
+			}}
+			exit={{ opacity: 0 }}
+			className="fixed inset-0 flex h-full min-h-screen w-screen items-center justify-center z-50 mx-auto"
+		>
+			<Loader />
+		</Motion>
 	);
 };
 
-export default DefaultLoading;
+export default Loading;

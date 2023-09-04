@@ -2,10 +2,9 @@
 import Link from "next/link";
 
 import { Heading } from "@/components/Heading";
-import { classNames } from "@/utils/class";
+import { cn } from "@/lib/utils";
 
 export const a = Link;
-export { Button } from "@/components/Button";
 export { CodeGroup, Code as code, Pre as pre } from "@/components/Code";
 
 export const h2 = function H2(props: any) {
@@ -28,9 +27,12 @@ function InfoIcon(props: any) {
 	);
 }
 
-export function Note({ children }: { children: any }) {
+export function Note({ children, ...props }: { children: any }) {
 	return (
-		<div className="my-6 flex gap-2.5 rounded-2xl border border-primary-500/20 bg-primary-50/50 p-4 leading-6 text-primary-900 dark:border-primary-500/30 dark:bg-primary-500/5 dark:text-primary-200 dark:[--tw-prose-links:theme(colors.white)] dark:[--tw-prose-links-hover:theme(colors.primary.300)]">
+		<div
+			{...props}
+			className="my-6 flex gap-2.5 rounded-2xl border border-primary-500/20 bg-primary-50/50 p-4 leading-6 text-primary-900 dark:border-primary-500/30 dark:bg-primary-500/5 dark:text-primary-200 dark:[--tw-prose-links:theme(colors.white)] dark:[--tw-prose-links-hover:theme(colors.primary.300)]"
+		>
 			<InfoIcon className="mt-1 h-4 w-4 flex-none fill-primary-500 stroke-white dark:fill-primary-200/20 dark:stroke-primary-200" />
 			<div className="[&>:first-child]:mt-0 [&>:last-child]:mb-0">
 				{children}
@@ -39,9 +41,23 @@ export function Note({ children }: { children: any }) {
 	);
 }
 
-export function Row({ children }: { children: any }) {
+export function Row({
+	children,
+	className = null,
+	...props
+}: {
+	children: any;
+	className?: string | null;
+}) {
 	return (
-		<div className="grid grid-cols-1 items-start gap-x-16 gap-y-10 xl:max-w-none xl:grid-cols-2">
+		<div
+			className={cn(
+				"grid items-start gap-x-4 gap-y-4 lg:max-w-full lg:grid-cols-2 md:grid-cols-2 grid-cols-1 py-5",
+				!className && "grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-10",
+				className
+			)}
+			{...props}
+		>
 			{children}
 		</div>
 	);
@@ -50,16 +66,22 @@ export function Row({ children }: { children: any }) {
 export function Col({
 	children,
 	sticky = false,
+	className = null,
+	...props
 }: {
 	children: any;
 	sticky?: boolean;
+	className?: string | null;
 }) {
 	return (
 		<div
-			className={classNames(
-				"[&>:first-child]:mt-0 [&>:last-child]:mb-0",
-				sticky && "xl:sticky xl:top-24"
+			className={cn(
+				"[&>:first-child]:mt-0 [&>:last-child]:mb-0 space-y-5 col-span-1",
+				sticky && "lg:sticky md:sticky md:top-20",
+				// !className && "col-span-1",
+				className
 			)}
+			{...props}
 		>
 			{children}
 		</div>

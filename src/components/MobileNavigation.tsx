@@ -3,12 +3,11 @@
 import { createContext, Fragment, useContext } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { motion } from "framer-motion";
-import { create } from "zustand";
 
 import { Header } from "@/components/Header";
 import { Navigation } from "@/components/Navigation";
-import { MobileNavigationState } from "@/types";
-import { classNames } from "@/utils/class";
+import { useMobileNavigationStore } from "@/hooks/use-mobile-navigation";
+import { cn } from "@/lib/utils";
 
 const IsInsideMobileNavigationContext = createContext(false);
 
@@ -16,26 +15,7 @@ export function useIsInsideMobileNavigation() {
 	return useContext(IsInsideMobileNavigationContext);
 }
 
-export const useMobileNavigationStore = create<MobileNavigationState>(
-	(set) => ({
-		isOpen: false,
-		open: () => set({ isOpen: true }),
-		close: () => set({ isOpen: false }),
-		toggle: () => set((state) => ({ isOpen: !state.isOpen })),
-	})
-);
-
-type HeaderProps = {
-	auth?: any;
-	cart?: any;
-	sensitive?: boolean;
-};
-
-export function MobileNavigation({
-	auth = false,
-	cart = null,
-	sensitive = false,
-}: HeaderProps) {
+export function MobileNavigation({ error = false }: { error?: boolean }) {
 	let isInsideMobileNavigation = useIsInsideMobileNavigation();
 	let { isOpen, toggle, close } = useMobileNavigationStore();
 	let ToggleIcon = isOpen ? XIcon : MenuIcon;
@@ -43,9 +23,9 @@ export function MobileNavigation({
 		<IsInsideMobileNavigationContext.Provider value={true}>
 			<button
 				type="button"
-				className={classNames(
+				className={cn(
 					"flex h-6 w-6 items-center justify-center rounded-md transition hover:bg-zinc-900/5 dark:hover:bg-white/5",
-					!auth && "lg:flex md:hidden flex"
+					"lg:flex md:hidden flex"
 				)}
 				aria-label="Toggle navigation"
 				onClick={toggle}
@@ -80,11 +60,7 @@ export function MobileNavigation({
 								leaveFrom="opacity-100"
 								leaveTo="opacity-0"
 							>
-								<Header
-									cart={cart}
-									sensitive={sensitive}
-									auth={auth}
-								/>
+								<Header />
 							</Transition.Child>
 
 							<Transition.Child
@@ -100,11 +76,7 @@ export function MobileNavigation({
 									layoutScroll
 									className="fixed left-0 top-14 bottom-0 w-full overflow-y-auto bg-white px-4 pt-6 pb-4 shadow-lg shadow-zinc-900/10 ring-1 ring-zinc-900/7.5 dark:bg-zinc-900 dark:ring-zinc-800 min-[416px]:max-w-sm sm:px-6 sm:pb-10"
 								>
-									<Navigation
-										cart={cart}
-										sensitive={sensitive}
-										auth={auth}
-									/>
+									<Navigation error={error} />
 								</motion.div>
 							</Transition.Child>
 						</Dialog.Panel>

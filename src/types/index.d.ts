@@ -1,85 +1,12 @@
-import { classNames } from "./../utils/class";
-type LayoutComponentsProps = {
-	children: React.ReactNode | any;
-	sections?: Section[];
-	session?: any;
-	cart?: any;
-};
-type ProseProps = {
-	children: React.ReactNode;
-	className?: string;
-	as?: any;
-	enable?: boolean;
-};
-
-interface MobileNavigationState {
-	isOpen: boolean;
-	open: () => void;
-	close: () => void;
-	toggle: () => void;
-}
-
-type UserSession = {
-	name?: string;
-	email?: string;
-};
-
-type SectionProviderProps = {
-	children: React.ReactNode;
-	sections?: React.ReactNode | any;
-};
-
-type AuthProviderProps = {
-	children: React.ReactNode;
-	isSensitiveRoute?: boolean;
-	isAuthSensitiveRoute?: boolean;
-	session?: UserSession | any;
-};
-
-type Section = {
-	id: string;
-	title?: string;
-	headingRef?: React.RefObject<HTMLElement>;
-	offsetRem?: number;
-};
-
-interface SectionProviderState {
-	sections: Section[];
-	visibleSections: string[];
-	setVisibleSections: (visibleSections: string[]) => void;
-	registerHeading: (params: {
-		id: string;
-		ref: React.RefObject<HTMLElement>;
-		offsetRem: number;
-	}) => void;
-}
-
-type VisibleSectionsProps = {
-	sectionStore: any;
-};
-
-type SectionStore = {
-	setVisibleSections: (visibleSections: string[]) => void;
-	sections: Section[];
-};
-
-type NavLinkProps = {
-	href: string;
-	isAnchorLink?: boolean;
-	children: React.ReactNode;
-	tag?: any;
-	active?: boolean;
-};
-
-type TopLevelNavItemProps = {
-	href: string;
-	children: React.ReactNode;
-};
-
-type GroupPathProps = {
-	pathname?: string;
-	group?: any;
-	className?: any;
+type LocationProps = {
+	href?: any;
+	protocol?: any;
+	host?: any;
+	hostname?: any;
+	port?: any;
+	pathname?: any;
+	search?: any;
+	hash?: any;
 };
 
 type GridPatternProps = {
@@ -91,6 +18,21 @@ type GridPatternProps = {
 	className?: string;
 };
 
+type ProseProps = {
+	children: React.ReactNode;
+	className?: string;
+	as?: any;
+	enable?: boolean;
+};
+
+interface LanguageMappings {
+	[key: string]: string;
+}
+interface PreferredLanguageState {
+	preferredLanguages: any[];
+	addPreferredLanguage: (language: any) => void;
+}
+
 type HeadingProps = {
 	level: any;
 	children?: any;
@@ -101,115 +43,83 @@ type HeadingProps = {
 	className?: string;
 };
 
-interface LanguageMappings {
-	[key: string]: string;
+interface PageProps {
+	children?: React.ReactNode | null;
+	modal?: React.ReactNode | null;
 }
 
-interface PreferredLanguageState {
-	preferredLanguages: any[];
-	addPreferredLanguage: (language: any) => void;
+interface AlertModalProps {
+	isOpen: boolean;
+	onClose: () => void;
+	onConfirm: () => void;
+	loading: boolean;
 }
 
-interface AlgoliaResult {
-	// Define the structure of your Algolia result here
-	// You can customize this based on your specific use case
-	// For example:
-	objectID: string;
-	title: string;
-	content: string;
-	// ...
+interface LayoutProps {
+	children?: React.ReactNode | null;
 }
 
-interface AlgoliaQuery {
-	query: string;
-	indexName: string;
-	params?: Record<string, any>;
-}
-// mailer
-import type { SendMailOptions, Transporter } from "nodemailer";
-
-type BuildSendMailOptions<T> = {
-	transport: Transporter<T>;
-	defaultFrom: string;
-	processHtml?: (html: string) => string;
+type TopLevelNavItemProps = {
+	href: string;
+	children: React.ReactNode;
 };
 
-type ComponentMail = SendMailOptions & {
-	component?: JSX.Element;
+interface MobileNavigationState {
+	isOpen: boolean;
+	open: () => void;
+	close: () => void;
+	toggle: () => void;
+}
+
+type GroupPathProps = {
+	pathname?: string;
+	group?: any;
+	className?: any;
+	error?: boolean;
 };
 
-// subscriptions
-import Stripe from "stripe";
-interface PageMeta {
-	title: string;
+type NavLinkProps = {
+	href: string;
+	isAnchorLink?: boolean;
+	children: React.ReactNode;
+	tag?: any;
+	active?: boolean;
+	error?: boolean;
+};
+
+type TopLevelNavItemProps = {
+	href: string;
+	children: React.ReactNode;
+};
+
+type Skill = {
+	name: string;
 	description: string;
-	cardImage: string;
+	level: number;
+	icon: any;
+	technology?: string | undefined | null;
+	type?: string[];
+};
+
+interface Project {
+	name: string;
+	description: string;
+	link?: {
+		href: string;
+		label: string;
+	};
+	logo?: any;
+	role?: string[];
+	type?: string;
+	year?: number | string;
+	tags?: string[];
 }
 
-interface Customer {
-	id: string /* primary key */;
-	stripe_customer_id?: string;
+interface Testimonial {
+	name: string;
+	username?: string;
+	description: string;
+	country: string;
+	date: any;
 }
-
-interface Product {
-	id: string /* primary key */;
-	active?: boolean;
-	name?: string;
-	description?: string;
-	image?: string;
-	metadata?: Stripe.Metadata;
-}
-
-interface ProductWithPrice extends Product {
-	prices?: Price[];
-}
-
-interface UserDetails {
-	id: string /* primary key */;
-	first_name: string;
-	last_name: string;
-	full_name?: string;
-	avatar_url?: string;
-	billing_address?: Stripe.Address;
-	payment_method?: Stripe.PaymentMethod[Stripe.PaymentMethod.Type];
-}
-
-interface Price {
-	id: string /* primary key */;
-	product_id?: string /* foreign key to products.id */;
-	active?: boolean;
-	description?: string;
-	unit_amount?: number;
-	currency?: string;
-	type?: Stripe.Price.Type;
-	interval?: Stripe.Price.Recurring.Interval;
-	interval_count?: number;
-	trial_period_days?: number | null;
-	metadata?: Stripe.Metadata;
-	products?: Product;
-}
-
-interface PriceWithProduct extends Price {}
-
-interface Subscription {
-	id: string /* primary key */;
-	user_id: string;
-	status?: Stripe.Subscription.Status;
-	metadata?: Stripe.Metadata;
-	price_id?: string /* foreign key to prices.id */;
-	quantity?: number;
-	cancel_at_period_end?: boolean;
-	created: string;
-	current_period_start: string;
-	current_period_end: string;
-	ended_at?: string;
-	cancel_at?: string;
-	canceled_at?: string;
-	trial_start?: string;
-	trial_end?: string;
-	prices?: Price;
-}
-
-interface DomainCardProps {
-	domain: string;
-}
+type PutData = [any, any, any, any];

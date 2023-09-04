@@ -1,23 +1,8 @@
 "use client";
 
-import { TextLoadingAnimation } from "@/components/animation/Lottie";
-import { classNames } from "@/utils/class";
 import React, { Fragment } from "react";
 import styles from "./loading-dots.module.css";
-
-const DefaultLoading = () => {
-	return (
-		<Fragment>
-			<div className="relative flex justify-center items-center min-h-[70vh] w-full">
-				<div className="w-screen max-w-xs">
-					<TextLoadingAnimation />
-				</div>
-			</div>
-		</Fragment>
-	);
-};
-
-export default DefaultLoading;
+import { cn } from "@/lib/utils";
 
 export function LoadingCircle({ className }: { className?: string }) {
 	return (
@@ -34,7 +19,7 @@ export function LoadingCircle({ className }: { className?: string }) {
 					cy="12"
 					r="10"
 					stroke="currentColor"
-					stroke-width="4"
+					strokeWidth="4"
 				></circle>
 				<path
 					className="opacity-75"
@@ -45,7 +30,7 @@ export function LoadingCircle({ className }: { className?: string }) {
 
 			<svg
 				aria-hidden="true"
-				className={classNames(
+				className={cn(
 					"h-6 w-6 p-1 animate-spin fill-gray-600 text-gray-200",
 					className
 				)}
@@ -70,22 +55,13 @@ export const LoadingDots = ({ className }: { className?: string }) => {
 	return (
 		<span className={styles.loading}>
 			<span
-				className={classNames(
-					"bg-primary-500 dark:bg-zinc-100",
-					className
-				)}
+				className={cn("bg-primary-500 dark:bg-zinc-100", className)}
 			/>
 			<span
-				className={classNames(
-					"bg-primary-500 dark:bg-zinc-100",
-					className
-				)}
+				className={cn("bg-primary-500 dark:bg-zinc-100", className)}
 			/>
 			<span
-				className={classNames(
-					"bg-primary-500 dark:bg-zinc-100",
-					className
-				)}
+				className={cn("bg-primary-500 dark:bg-zinc-100", className)}
 			/>
 		</span>
 	);

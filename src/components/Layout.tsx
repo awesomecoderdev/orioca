@@ -1,39 +1,19 @@
 "use client";
 
-import { Fragment, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
-import { Logo } from "@/components/Logo";
-import { Navigation } from "@/components/Navigation";
+import { Fragment, useEffect, useMemo, useRef } from "react";
+import { AnimatePresence, motion, useIsPresent } from "framer-motion";
+
 import { Prose } from "@/components/Prose";
-import { SectionProvider } from "@/components/SectionProvider";
 import { usePathname } from "next/navigation";
-import { useMobileNavigationStore } from "@/components/MobileNavigation";
-import TagManager from "react-gtm-module";
-import { LayoutComponentsProps } from "@/types";
-import { authRoutes, sensitiveRoutes } from "@/utils/route";
-import { Toaster } from "sonner";
-import { classNames } from "@/utils/class";
-import { AuthProvider } from "./AuthProvider";
+import { cn } from "@/lib/utils";
+import { Header } from "@/components/Header";
+import { HeroPattern } from "@/components/HeroPattern";
+import { Footer } from "@/components/Footer";
+// import TagManager from "react-gtm-module";
 
-export function Layout({
-	children,
-	sections = [],
-	session = null,
-	cart = null,
-}: LayoutComponentsProps) {
+export function Layout({ children = null }: LayoutProps) {
 	const pathname = usePathname();
-
-	const isSensitiveRoute = sensitiveRoutes.some((route) =>
-		pathname.startsWith(route)
-	);
-
-	const isAuthSensitiveRoute = useMemo(
-		() => authRoutes.some((route) => pathname.startsWith(route)),
-		[pathname]
-	);
 
 	// useEffect(() => {
 	// 	// google tag manager
@@ -42,115 +22,28 @@ export function Layout({
 	// 	});
 	// }, []);
 
-	useEffect(() => {
-		if (!session && isSensitiveRoute) {
-			location.reload();
-		}
-
-		if (session && isAuthSensitiveRoute) {
-			location.reload();
-		}
-	}, [session, isSensitiveRoute, isAuthSensitiveRoute]);
-
 	return (
-		<AuthProvider
-			isAuthSensitiveRoute={isAuthSensitiveRoute}
-			isSensitiveRoute={isSensitiveRoute}
-			session={session}
-		>
-			<SectionProvider sections={sections}>
-				<Toaster duration={4000} expand={true} />
-				{session?.email && isSensitiveRoute ? (
-					<Fragment>
-						<div className="lg:ml-60 xl:ml-64">
-							<motion.header
-								layoutScroll
-								className="fixed inset-y-0 left-0 z-40 contents w-60 overflow-y-auto border-r border-zinc-900/10 px-6 pt-4 pb-8 dark:border-white/10 lg:block xl:w-64"
-							>
-								<div className="hidden lg:flex">
-									<Link href="/" aria-label="Home">
-										<Logo className="h-6" />
-									</Link>
-								</div>
-								<Header
-									cart={cart}
-									sensitive={isSensitiveRoute}
-									auth={session}
-								/>
-								<Navigation
-									cart={cart}
-									sensitive={isSensitiveRoute}
-									auth={session}
-									className="hidden lg:mt-10 lg:block"
-								/>
-							</motion.header>
-							<div className="relative px-6 pt-14 sm:px-7 lg:px-8">
-								<main
-									className={classNames(
-										isSensitiveRoute
-											? "sensitive py-6"
-											: "py-10"
-									)}
-								>
-									<Prose
-										className={classNames(
-											isSensitiveRoute && "sensitive"
-										)}
-										as="article"
-									>
-										{children}
-									</Prose>
-								</main>
-							</div>
-						</div>
-					</Fragment>
-				) : (
-					<Fragment>
-						<motion.header
-							layoutScroll
-							className={classNames(
-								"relative z-40 contents px-6 pt-4 pb-8",
-								isAuthSensitiveRoute && "hidden"
-							)}
-						>
-							<Header
-								cart={cart}
-								sensitive={isSensitiveRoute}
-								auth={session}
-							/>
-						</motion.header>
-						<div
-							className={classNames(
-								"relative",
-								!isAuthSensitiveRoute &&
-									"pt-14 px-6 sm:px-7 lg:px-8"
-							)}
-						>
-							<main
-								className={classNames(
-									// "relative",
-									!isAuthSensitiveRoute && "py-10"
-								)}
-							>
-								<Prose
-									enable={!isAuthSensitiveRoute}
-									className={classNames(
-										isSensitiveRoute && "sensitive"
-									)}
-									as="article"
-								>
-									{children}
-								</Prose>
-							</main>
-						</div>
-						<Footer
-							className={classNames(
-								isAuthSensitiveRoute && "hidden"
-							)}
-						/>
-					</Fragment>
+		<Fragment>
+			<motion.header
+				layoutScroll
+				className={cn("relative z-40 contents px-6 pt-4 pb-8 ")}
+			>
+				<Header />
+			</motion.header>
+			<Prose
+				as="main"
+				className={cn(
+					"relative min-h-[calc(100vh-75px)] pt-24 lg:px-8 sm:px-7 xs:px-5 px-4 xl:overflow-visible overflow-hidden"
 				)}
-			</SectionProvider>
-		</AuthProvider>
+			>
+				{pathname == "/" && <HeroPattern />}
+
+				<AnimatePresence initial={false}>{children}</AnimatePresence>
+			</Prose>
+			<Footer
+				// className={cn("absolute w-full bottom-0")}
+				className="py-6 lg:mt-10"
+			/>
+		</Fragment>
 	);
 }

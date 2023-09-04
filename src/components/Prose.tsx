@@ -1,6 +1,6 @@
 "use client";
-import { ProseProps } from "@/types";
-import { classNames } from "@/utils/class";
+
+import { cn } from "@/lib/utils";
 
 export function Prose({
 	as: Component = "div",
@@ -10,7 +10,7 @@ export function Prose({
 }: ProseProps) {
 	return (
 		<Component
-			className={classNames(
+			className={cn(
 				className,
 				enable ? "prose dark:prose-invert" : "not-prose"
 			)}

@@ -7,7 +7,7 @@ import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import Script from "next/script";
 import { Button } from "@/components/Button";
 import BlurImage from "@/components/BlurImage";
-import { classNames } from "@/utils/class";
+import { cn } from "@/lib/utils";
 
 export default function Tooltip({
 	children,
@@ -41,7 +41,7 @@ export default function Tooltip({
 		<>
 			<button
 				type="button"
-				className={classNames(
+				className={cn(
 					fullWidth ? "w-full" : "inline-flex",
 					"sm:hidden"
 				)}

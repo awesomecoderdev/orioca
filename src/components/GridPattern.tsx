@@ -1,5 +1,4 @@
 "use client";
-import { GridPatternProps } from "@/types";
 import { useId } from "react";
 
 export function GridPattern({

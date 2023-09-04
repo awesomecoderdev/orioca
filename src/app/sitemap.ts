@@ -3,15 +3,27 @@ import { MetadataRoute } from "next";
 export default function sitemap(): MetadataRoute.Sitemap {
 	return [
 		{
-			url: "https://acme.com",
+			url: "https://awesomecoder.dev",
 			lastModified: new Date(),
 		},
 		{
-			url: "https://acme.com/about",
+			url: "https://awesomecoder.dev/about",
 			lastModified: new Date(),
 		},
 		{
-			url: "https://acme.com/blog",
+			url: "https://awesomecoder.dev/skills",
+			lastModified: new Date(),
+		},
+		{
+			url: "https://awesomecoder.dev/projects",
+			lastModified: new Date(),
+		},
+		{
+			url: "https://awesomecoder.dev/testimonials",
+			lastModified: new Date(),
+		},
+		{
+			url: "https://awesomecoder.dev/contact",
 			lastModified: new Date(),
 		},
 	];

@@ -1,6 +1,6 @@
 "use client";
 
-import { classNames } from "@/utils/class";
+import { cn } from "@/lib/utils";
 import Image, { ImageProps } from "next/image";
 import { useEffect, useState } from "react";
 interface BlurImageProps extends ImageProps {
@@ -16,7 +16,7 @@ export default function BlurImage(props: BlurImageProps) {
 			{...props}
 			src={src ?? `https://avatar.vercel.sh/${props.alt}`}
 			alt={props.alt}
-			className={classNames(
+			className={cn(
 				props?.noblur == "true"
 					? ""
 					: loading

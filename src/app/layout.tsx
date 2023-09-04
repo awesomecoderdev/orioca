@@ -1,76 +1,33 @@
-import { Header } from "@/components/Header";
-import "./globals.css";
-import { Inter } from "next/font/google";
-import { Layout } from "@/components/Layout";
-import { cookies as getCookies } from "next/headers";
-import { getCartFromCookie, getUserFromCookie } from "@/utils/buffer";
 import { Metadata } from "next";
-import { constructMetadata } from "@/utils/utils";
+import { Inter } from "next/font/google";
+import { cn, constructMetadata } from "@/lib/utils";
 
-// const inter = Inter({ subsets: ["latin"] });
+import "./globals.css";
 
-const modeScript = `
-  let darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+const inter = Inter({ subsets: ["latin"] });
 
-  updateMode()
-  darkModeMediaQuery.addEventListener('change', updateModeWithoutTransitions)
-  window.addEventListener('storage', updateModeWithoutTransitions)
-
-  function updateMode() {
-    let isSystemDarkMode = darkModeMediaQuery.matches
-    let isDarkMode = window.localStorage.isDarkMode === 'true' || (!('isDarkMode' in window.localStorage) && isSystemDarkMode)
-
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-    }
-
-    if (isDarkMode === isSystemDarkMode) {
-      delete window.localStorage.isDarkMode
-    }
-  }
-
-  function disableTransitionsTemporarily() {
-    document.documentElement.classList.add('[&_*]:!transition-none')
-    window.setTimeout(() => {
-      document.documentElement.classList.remove('[&_*]:!transition-none')
-    }, 0)
-  }
-
-  function updateModeWithoutTransitions() {
-    disableTransitionsTemporarily()
-    updateMode()
-  }
-`;
+export const metadata: Metadata = constructMetadata({
+	title: "Mohammad Ibrahim",
+	description:
+		"I will make your visions become reality, and I love what I do. Since beginning my journey as a web developer nearly 4 years ago, I've done remote work for agencies, consulted for startups.",
+});
 
 export default function RootLayout({
 	children,
 }: {
 	children: React.ReactNode;
 }) {
-	const cookies = getCookies();
-	const token = cookies.get("token")?.value;
-	const session = getUserFromCookie(token);
-
-	let session_id = cookies.get("session_id")?.value;
-	const cart = getCartFromCookie(session_id);
-
 	return (
 		<html lang="en">
-			<head>
-				<script dangerouslySetInnerHTML={{ __html: modeScript }} />
-			</head>
-			<body className="bg-white antialiased dark:bg-zinc-900">
-				<Layout cart={cart} session={session}>
-					{children}
-				</Layout>
+			<body
+				className={cn(
+					"min-h-screen bg-background font-sans antialiased",
+					// "text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900",
+					inter.className
+				)}
+			>
+				{children}
 			</body>
 		</html>
 	);
 }
-export const metadata: Metadata = constructMetadata({
-	title: `Orioca | Orioca software solutions are designed to streamline your operations, maximize your business growth, and reach your goal.`,
-	description:
-		"Orioca software solutions are designed to streamline your operations, maximize your business growth, and reach your goal.",
-});

@@ -5,10 +5,12 @@ import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
 
 import { GridPattern } from "@/components/GridPattern";
 import { Heading } from "@/components/Heading";
-import { ChatBubbleIcon } from "@/components/icons/ChatBubbleIcon";
-import { EnvelopeIcon } from "@/components/icons/EnvelopeIcon";
-import { UserIcon } from "@/components/icons/UserIcon";
-import { UsersIcon } from "@/components/icons/UsersIcon";
+import {
+	ChatBubbleLeftIcon,
+	EnvelopeIcon,
+	UserIcon,
+} from "@heroicons/react/24/outline";
+import { UsersIcon } from "lucide-react";
 
 const resources = [
 	{
@@ -30,7 +32,7 @@ const resources = [
 		name: "Conversations",
 		description:
 			"Learn about the conversation model and how to create, retrieve, update, delete, and list conversations.",
-		icon: ChatBubbleIcon,
+		icon: ChatBubbleLeftIcon,
 		pattern: {
 			y: -6,
 			squares: [
@@ -74,7 +76,7 @@ function ResourceIcon({ icon: Icon }: { icon: any }) {
 	);
 }
 
-function ResourcePattern({
+export function ResourcePattern({
 	mouseX,
 	mouseY,
 	...gridProps
@@ -164,7 +166,7 @@ export function Resource({ resource }: { resource: any }) {
 
 export function Resources() {
 	return (
-		<div className="my-16 xl:max-w-none">
+		<div className="my-16">
 			<Heading level={2} id="resources">
 				Resources
 			</Heading>

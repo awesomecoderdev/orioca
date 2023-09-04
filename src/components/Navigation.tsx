@@ -1,18 +1,13 @@
 "use client";
 
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useIsPresent } from "framer-motion";
 import { Button } from "@/components/Button";
-import {
-	useIsInsideMobileNavigation,
-	useMobileNavigationStore,
-} from "@/components/MobileNavigation";
-import { useSectionStore } from "@/components/SectionProvider";
+import { useIsInsideMobileNavigation } from "@/components/MobileNavigation";
 import { Tag } from "@/components/Tag";
 import { remToPx } from "@/lib/remToPx";
-import { classNames } from "@/utils/class";
 import { usePathname } from "next/navigation";
 import {
 	LinkIcon,
@@ -26,10 +21,23 @@ import {
 	ArrowUpOnSquareStackIcon,
 	RectangleGroupIcon,
 } from "@heroicons/react/24/outline";
-import { GroupPathProps, NavLinkProps, TopLevelNavItemProps } from "@/types";
-import axios from "@/utils/axios";
-import { toast } from "sonner";
-import { LoadingDots } from "./animation/Loading";
+import { LoadingDots } from "@/components/animation/Loading";
+import { cn } from "@/lib/utils";
+import { useMobileNavigationStore } from "@/hooks/use-mobile-navigation";
+import {
+	Boxes,
+	CheckCheck,
+	GitCompare,
+	HardDrive,
+	Info,
+	LayoutList,
+	MousePointerClick,
+	Phone,
+	Server,
+	Terminal,
+} from "lucide-react";
+import { useOrigin } from "@/hooks/use-origin";
+import { navigations } from "@/lib/const";
 
 function useInitialValue(value: any, condition = true) {
 	let initialValue = useRef(value).current;
@@ -55,37 +63,59 @@ function NavLink({
 	tag,
 	active,
 	isAnchorLink = false,
+	error = false,
 	children,
 }: NavLinkProps) {
 	return (
-		<Link
-			href={href}
-			aria-current={active ? "page" : undefined}
-			onClick={(e) => useMobileNavigationStore.getState().close()}
-			className={classNames(
-				"flex justify-between gap-2 py-1 pr-3 text-sm transition",
-				isAnchorLink ? "pl-7" : "pl-2",
-				active
-					? "text-zinc-900 dark:text-white"
-					: "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+		<Fragment>
+			{error ? (
+				<a
+					href={href}
+					aria-current={active ? "page" : undefined}
+					onClick={(e) => useMobileNavigationStore.getState().close()}
+					className={cn(
+						"flex justify-between gap-2 py-1 pr-3 text-sm transition",
+						isAnchorLink ? "pl-7" : "pl-2",
+						active
+							? "text-zinc-900 dark:text-white"
+							: "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+					)}
+				>
+					<span className="truncate">{children}</span>
+					{tag && (
+						<Tag variant="small" color="zinc">
+							{tag}
+						</Tag>
+					)}
+				</a>
+			) : (
+				<Link
+					href={href}
+					aria-current={active ? "page" : undefined}
+					onClick={(e) => useMobileNavigationStore.getState().close()}
+					className={cn(
+						"flex justify-between gap-2 py-1 pr-3 text-sm transition",
+						isAnchorLink ? "pl-7" : "pl-2",
+						active
+							? "text-zinc-900 dark:text-white"
+							: "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+					)}
+				>
+					<span className="truncate">{children}</span>
+					{tag && (
+						<Tag variant="small" color="zinc">
+							{tag}
+						</Tag>
+					)}
+				</Link>
 			)}
-		>
-			<span className="truncate">{children}</span>
-			{tag && (
-				<Tag variant="small" color="zinc">
-					{tag}
-				</Tag>
-			)}
-		</Link>
+		</Fragment>
 	);
 }
 
 function VisibleSectionHighlight({ group, pathname }: GroupPathProps) {
 	let [sections, visibleSections] = useInitialValue(
-		[
-			useSectionStore((s) => s.sections),
-			useSectionStore((s) => s.visibleSections),
-		],
+		[[], []],
 		useIsInsideMobileNavigation()
 	);
 
@@ -136,9 +166,9 @@ function ActivePageMarker({ group, pathname }: GroupPathProps) {
 		/>
 	);
 }
-
-function NavigationGroup({ group, className }: GroupPathProps) {
+function NavigationGroup({ group, className, error = false }: GroupPathProps) {
 	const pathname = usePathname();
+	const { hash } = useOrigin();
 
 	// If this is the mobile navigation then we always render the initial
 	// state, so that the state does not change during the close animation.
@@ -150,15 +180,15 @@ function NavigationGroup({ group, className }: GroupPathProps) {
 	// );
 
 	let [router, sections] = useInitialValue(
-		[pathname, useSectionStore((s) => s.sections)],
+		[pathname, []],
 		isInsideMobileNavigation
 	);
 
 	let isActiveGroup =
-		group.links.findIndex((link: any) => link.href === pathname) !== -1;
+		group.links.findIndex((link: any) => link?.href === pathname) !== -1;
 
 	return (
-		<li className={classNames("relative", className)}>
+		<li className={cn("relative", className)}>
 			<motion.h2
 				layout="position"
 				className="text-xs font-semibold text-zinc-900 dark:text-white"
@@ -192,7 +222,12 @@ function NavigationGroup({ group, className }: GroupPathProps) {
 						>
 							<NavLink
 								href={link.href}
-								active={link.href === pathname}
+								error={error}
+								active={
+									link.href === pathname ||
+									link.href == `${pathname}/${hash}`
+								}
+								tag={link?.tag}
 							>
 								<span className="flex items-center">
 									{link.icon && (
@@ -203,31 +238,85 @@ function NavigationGroup({ group, className }: GroupPathProps) {
 							</NavLink>
 							<AnimatePresence mode="popLayout" initial={false}>
 								{link.href === pathname &&
-									sections.length > 0 && (
-										<motion.ul
-											role="list"
-											initial={{ opacity: 0 }}
-											animate={{
-												opacity: 1,
-												transition: { delay: 0.1 },
-											}}
-											exit={{
-												opacity: 0,
-												transition: { duration: 0.15 },
-											}}
-										>
-											{sections.map((section: any) => (
-												<li key={section.id}>
-													<NavLink
-														href={`${link.href}#${section.id}`}
-														tag={section.tag}
-														isAnchorLink
+									link.sections &&
+									link.sections.length > 0 && (
+										<Fragment>
+											{link.sections?.map(
+												(
+													section: {
+														title: string;
+														links: [];
+													},
+													sectionIndex: number
+												) => (
+													<Fragment
+														key={sectionIndex}
 													>
-														{section.title}
-													</NavLink>
-												</li>
-											))}
-										</motion.ul>
+														{section.links.length >
+															0 && (
+															<div className="relative pl-2">
+																<motion.h2
+																	layout="position"
+																	className="text-xs font-semibold text-zinc-900 dark:text-white"
+																>
+																	{
+																		section.title
+																	}
+																</motion.h2>
+																<motion.ul
+																	role="list"
+																	initial={{
+																		opacity: 0,
+																	}}
+																	animate={{
+																		opacity: 1,
+																		transition:
+																			{
+																				delay: 0.1,
+																			},
+																	}}
+																	exit={{
+																		opacity: 0,
+																		transition:
+																			{
+																				duration: 0.15,
+																			},
+																	}}
+																>
+																	{section.links?.map(
+																		(
+																			link: any,
+																			index
+																		) => (
+																			<li
+																				key={`${link.href}${index}`}
+																			>
+																				<NavLink
+																					href={`${link.href}`}
+																					tag={
+																						link.tag
+																					}
+																					isAnchorLink
+																				>
+																					<span className="flex items-center">
+																						{link.icon && (
+																							<link.icon className="h-4 w-4 mr-1.5" />
+																						)}
+																						{
+																							link.title
+																						}
+																					</span>
+																				</NavLink>
+																			</li>
+																		)
+																	)}
+																</motion.ul>
+															</div>
+														)}
+													</Fragment>
+												)
+											)}
+										</Fragment>
 									)}
 							</AnimatePresence>
 						</motion.li>
@@ -238,167 +327,57 @@ function NavigationGroup({ group, className }: GroupPathProps) {
 	);
 }
 
-export const navigation = [
-	{
-		title: "General",
-		links: [
-			{
-				title: "Dashboard",
-				href: "/dashboard",
-				icon: RectangleGroupIcon,
-			},
-			{ title: "Websites", href: "/websites", icon: LinkIcon },
-		],
-	},
-	{
-		title: "Subscriptions",
-		links: [
-			{
-				title: "Subscriptions",
-				href: "/subscriptions",
-				icon: BanknotesIcon,
-			},
-			// {
-			// 	title: "Payments",
-			// 	href: "/payments",
-			// 	icon: BanknotesIcon,
-			// },
-			// {
-			// 	title: "Billing",
-			// 	href: "/settings/billing",
-			// 	icon: CreditCardIcon,
-			// },
-			{
-				title: "Billing",
-				href: "/billing",
-				icon: CreditCardIcon,
-			},
-		],
-	},
-	{
-		title: "Settings",
-		links: [
-			{ title: "General", href: "/settings", icon: Cog6ToothIcon },
-			{
-				title: "Profile",
-				href: "/settings/profile",
-				icon: UserCircleIcon,
-			},
-			{
-				title: "Notification",
-				href: "/settings/notifications",
-				icon: BellAlertIcon,
-			},
-			// {
-			// 	title: "Billing",
-			// 	href: "/settings/billing",
-			// 	icon: CreditCardIcon,
-			// },
-		],
-	},
-];
-
 type HeaderProps = {
 	auth?: any;
 	className?: any;
 	cart?: any;
 	sensitive?: boolean;
+	error?: boolean;
 };
 
 export function Navigation({
 	auth = false,
 	cart = null,
+	error = false,
 	sensitive = false,
 	className,
 	...props
 }: HeaderProps) {
-	const [logoutLoading, setLogoutLoading] = useState(false);
-
-	const logout = async (e: any) => {
-		setLogoutLoading(true);
-		axios
-			.post("/api/auth/logout")
-			.then((res) => {
-				toast.success("You have successfully logged out!");
-				location.reload();
-			})
-			.catch((error) => {
-				toast.error("Something went wrong!");
-			});
-	};
-
 	return (
-		<nav className={classNames(className)}>
+		<nav className={cn(className)}>
 			<ul role="list">
-				{!sensitive && (
-					<Fragment>
-						<TopLevelNavItem href="#">
-							Getting Started
-						</TopLevelNavItem>
-						<TopLevelNavItem href="/pricing">
-							Pricing
-						</TopLevelNavItem>
-						<TopLevelNavItem href="#">Support</TopLevelNavItem>
-					</Fragment>
-				)}
+				{/* <Fragment>
+					<TopLevelNavItem href="/about">About</TopLevelNavItem>
+					<TopLevelNavItem href="/skills">Skills</TopLevelNavItem>
+					<TopLevelNavItem href="/projects">Projects</TopLevelNavItem>
+					<TopLevelNavItem href="/testimonials">
+						Testimonials
+					</TopLevelNavItem>
+					<TopLevelNavItem href="/contact">Contact</TopLevelNavItem>
+				</Fragment> */}
 
-				{navigation.map((group, groupIndex) => (
+				{navigations.map((group, groupIndex) => (
 					<NavigationGroup
 						key={group.title}
 						group={group}
-						className={classNames(
-							groupIndex === 0 && "md:mt-0",
-							!auth && "hidden",
-							!sensitive && "md:block hidden"
+						error={error}
+						className={cn(
+							groupIndex === 0 && "md:mt-0"
+							// !auth && "hidden",
+							// !sensitive && "md:block hidden"
 						)}
 					/>
 				))}
 
 				<li
-					className={classNames(
+					className={cn(
 						// "sticky bottom-0 z-10 mt-6 min-[416px]:hidden",
 						"sticky bottom-0 z-10 mt-6 md:hidden"
 					)}
 				>
-					{auth ? (
-						!sensitive ? (
-							<Button
-								variant="filled"
-								className="w-full flex items-center"
-								href="/dashboard"
-							>
-								<RectangleGroupIcon className="h-4 w-4 mr-2" />
-								Dashboard
-							</Button>
-						) : (
-							<Button
-								variant="filled"
-								className={classNames(
-									"w-full flex items-center hover:bg-zinc-900 dark:hover:bg-primary-500",
-									logoutLoading &&
-										"justify-center min-h-[32px]"
-								)}
-								onClick={(e) => logout(e)}
-							>
-								{logoutLoading ? (
-									<LoadingDots className="bg-white" />
-								) : (
-									<>
-										<ArrowUpOnSquareStackIcon className="h-4 w-4 mr-2 transform rotate-90" />
-										Logout
-									</>
-								)}
-							</Button>
-						)
-					) : (
-						<Button
-							variant="filled"
-							className="w-full"
-							href="/login"
-						>
-							Sign in
-						</Button>
-					)}
+					<Button variant="filled" className="w-full" href="/cv.pdf">
+						Download CV
+					</Button>
 				</li>
 			</ul>
 		</nav>

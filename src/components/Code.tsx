@@ -10,9 +10,8 @@ import {
 import { Tab } from "@headlessui/react";
 import { create } from "zustand";
 import { Tag } from "@/components/Tag";
-import { classNames } from "@/utils/class";
 import { highlight } from "@/lib/highlighter";
-import { LanguageMappings, PreferredLanguageState } from "@/types";
+import { cn } from "@/lib/utils";
 
 const languageNames: LanguageMappings = {
 	js: "JavaScript",
@@ -74,7 +73,7 @@ function CopyButton({ code }: { code: any }) {
 	return (
 		<button
 			type="button"
-			className={classNames(
+			className={cn(
 				"group/button absolute top-3.5 right-4 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium lg:opacity-0 opacity-100 backdrop-blur transition focus:opacity-100 group-hover:opacity-100",
 				copied
 					? "bg-primary-400/10 ring-1 ring-inset ring-primary-400/20"
@@ -88,7 +87,7 @@ function CopyButton({ code }: { code: any }) {
 		>
 			<span
 				aria-hidden={copied}
-				className={classNames(
+				className={cn(
 					"pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300",
 					copied && "-translate-y-1.5 opacity-0"
 				)}
@@ -98,7 +97,7 @@ function CopyButton({ code }: { code: any }) {
 			</span>
 			<span
 				aria-hidden={!copied}
-				className={classNames(
+				className={cn(
 					"pointer-events-none absolute inset-0 flex items-center justify-center text-primary-400 transition duration-300",
 					!copied && "translate-y-1.5 opacity-0"
 				)}
@@ -186,7 +185,7 @@ function CodeGroupHeader({
 				<Tab.List className="-mb-px flex gap-4 text-xs font-medium">
 					{Children.map(children, (child, childIndex) => (
 						<Tab
-							className={classNames(
+							className={cn(
 								"border-b py-3 transition focus:[&:not(:focus-visible)]:outline-none outline-none",
 								childIndex === selectedIndex
 									? "border-primary-500 text-primary-400"
@@ -376,7 +375,7 @@ export function Code({
 	if (isGrouped) {
 		return (
 			<code
-				className={classNames(
+				className={cn(
 					`code language-${lang}`,
 					className,
 					nohighlight && "nohighlight"
@@ -391,7 +390,7 @@ export function Code({
 
 	return (
 		<code
-			className={classNames(
+			className={cn(
 				`code language-${lang}`,
 				className,
 				nohighlight && "nohighlight"

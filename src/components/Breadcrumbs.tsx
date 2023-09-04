@@ -5,11 +5,10 @@ import {
 	LinkIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import ArrowRightIcon from "@/components/icons/Arrow";
 import { usePathname } from "next/navigation";
 import { Fragment } from "react";
-import { classNames } from "@/utils/class";
-import { capitalize } from "@/utils/utils";
+import { capitalize, cn } from "@/lib/utils";
+import { ArrowRightIcon } from "lucide-react";
 
 type LinkItem = {
 	link: string;
@@ -54,7 +53,7 @@ const Breadcrumbs = () => {
 
 									<Link
 										href={`${item.link}`}
-										className={classNames(
+										className={cn(
 											"flex items-center text-gray-600 -px-2 dark:text-gray-200 hover:underline",
 											index == endpoints.length - 1 &&
 												"text-primary-500 dark:text-primary-500"

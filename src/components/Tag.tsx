@@ -1,5 +1,6 @@
 "use client";
-import { classNames } from "@/utils/class";
+
+import { cn } from "@/lib/utils";
 
 const variantStyles: any = {
 	medium: "rounded-lg px-1.5 ring-1 ring-inset",
@@ -46,7 +47,7 @@ export function Tag({
 }) {
 	return (
 		<span
-			className={classNames(
+			className={cn(
 				"font-mono text-[0.625rem] font-semibold leading-6",
 				variantStyles[variant],
 				colorStyles[color] ? colorStyles[color][variant] : ""
